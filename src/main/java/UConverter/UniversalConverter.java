@@ -9,13 +9,35 @@ import java.util.List;
 
 public class UniversalConverter {
 
-    private List<UnitConverter> converters = Arrays.asList(
+    private final List<UnitConverter> converters = Arrays.asList(
             new CelsiusUC(),
             new FarenheitUC(),
             new KelvinUC()
     );
+
+
     private UnitConverter sourceConverter;
     private UnitConverter targetConverter;
+
+    public void setTargetConverter(UnitConverter targetConverter) {
+        this.targetConverter = targetConverter;
+    }
+
+    public void setSourceConverter(UnitConverter sourceConverter) {
+        this.sourceConverter = sourceConverter;
+    }
+
+    public UnitConverter getSourceConverter() {
+        return sourceConverter;
+    }
+
+    public UnitConverter getTargetConverter() {
+        return targetConverter;
+    }
+
+    public List<UnitConverter> getConverters() {
+        return converters;
+    }
 
     @Command(name = "list", abbrev = "l")
     public void list(){
@@ -34,8 +56,19 @@ public class UniversalConverter {
     }
     @Command(name = "Convert", abbrev = "c")
     public String convert(double value){
+        UnitConverter src = getSourceConverter();
+        UnitConverter trg = getTargetConverter();
+        if (src == null && trg == null) {
+            throw new IllegalStateException("Source and Target converters are not set");
+        }
+        if (src == null) {
+            throw new IllegalStateException("Source converter is not set");
+        }
+        if (trg == null) {
+            throw new IllegalStateException("Target converter is not set");
+        }
         //double abc = sourceConverter.toSI(value);
-        return String.format("%.2f",targetConverter.fromSI(sourceConverter.toSI(value)));
+        return String.format("%.2f",trg.fromSI(src.toSI(value)));
     }
 
 }
